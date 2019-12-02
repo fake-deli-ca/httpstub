@@ -2,6 +2,7 @@ package org.hidetake.stubyaml.model.execution;
 
 import groovy.lang.Script;
 import lombok.Data;
+import lombok.val;
 
 @Data
 public class CompiledExpression {
@@ -9,7 +10,7 @@ public class CompiledExpression {
 
     public Object evaluate(Bindable bindable) {
         try {
-            final var script = clazz.newInstance();
+            val script = clazz.newInstance();
             script.setBinding(bindable.getBinding());
             return script.run();
         } catch (InstantiationException | IllegalAccessException e) {

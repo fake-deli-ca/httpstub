@@ -1,6 +1,7 @@
 package org.hidetake.stubyaml.model.execution;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 import java.io.File;
 import java.util.List;
@@ -33,14 +34,14 @@ public interface CompiledResponseBody<T> {
             if (body == null || body instanceof Number || body instanceof Boolean) {
                 return body;
             } else if (body instanceof CompiledExpression) {
-                final var expression = (CompiledExpression) body;
-                final var value = expression.evaluate(responseContext);
+                val expression = (CompiledExpression) body;
+                val value = expression.evaluate(responseContext);
                 return evaluate(value, responseContext);
             } else if (body instanceof List) {
-                final var list = (List<?>) body;
+                val list = (List<?>) body;
                 return list.stream().map(e -> evaluate(e, responseContext)).collect(toList());
             } else if (body instanceof Map) {
-                final var map = (Map<?, ?>) body;
+                val map = (Map<?, ?>) body;
                 return mapValue(map, v -> evaluate(v, responseContext));
             } else {
                 return body.toString();
@@ -55,8 +56,8 @@ public interface CompiledResponseBody<T> {
 
         @Override
         public File evaluate(ResponseContext responseContext) {
-            final var filename = nullSafeToString(filenameExpression.evaluate(responseContext));
-            final var file = new File(baseDirectory, filename);
+            val filename = nullSafeToString(filenameExpression.evaluate(responseContext));
+            val file = new File(baseDirectory, filename);
             if (file.exists()) {
                 return file;
             } else {

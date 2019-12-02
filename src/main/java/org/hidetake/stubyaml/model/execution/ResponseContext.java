@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.val;
 
 @Data
 @Builder
@@ -15,7 +16,7 @@ public class ResponseContext implements Bindable {
     private final Binding binding = createBinding();
 
     private Binding createBinding() {
-        final var binding = requestContext.createBinding();
+        val binding = requestContext.createBinding();
         binding.setVariable("table", resolvedTable.getMap());
         return binding;
     }

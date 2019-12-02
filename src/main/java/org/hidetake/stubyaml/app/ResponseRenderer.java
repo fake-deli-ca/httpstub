@@ -3,6 +3,7 @@ package org.hidetake.stubyaml.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.hidetake.stubyaml.model.execution.CompiledResponse;
 import org.hidetake.stubyaml.model.execution.RequestContext;
 import org.hidetake.stubyaml.model.execution.ResponseContext;
@@ -29,7 +30,7 @@ public class ResponseRenderer {
     private final XmlMapper xmlMapper = new XmlMapper();
 
     public Mono<ServerResponse> render(CompiledResponse compiledResponse, RequestContext requestContext) {
-        final var responseContext = ResponseContext.builder()
+        val responseContext = ResponseContext.builder()
             .requestContext(requestContext)
             .resolvedTable(compiledResponse.getTables().resolve(requestContext))
             .build();
@@ -38,24 +39,24 @@ public class ResponseRenderer {
     }
 
     private Mono<ServerResponse> renderInternal(CompiledResponse compiledResponse, ResponseContext responseContext) {
-        final var headers = new HttpHeaders();
+        val headers = new HttpHeaders();
         headers.setAll(compiledResponse.evaluateHeaders(responseContext));
 
-        final var responseBuilder = ServerResponse
+        val responseBuilder = ServerResponse
             .status(compiledResponse.getHttpStatus())
             .headers(httpHeaders -> httpHeaders.putAll(headers));
 
-        final var evaluatedBody = compiledResponse.getBody().evaluate(responseContext);
+        val evaluatedBody = compiledResponse.getBody().evaluate(responseContext);
         if (evaluatedBody == null) {
             return responseBuilder.build()
                 .doOnSuccess(response -> requestResponseLogger.logResponse(response, null));
         } else if (evaluatedBody instanceof File) {
-            final var resource = new FileSystemResource((File) evaluatedBody);
+            val resource = new FileSystemResource((File) evaluatedBody);
             return responseBuilder
                 .body(BodyInserters.fromResource(resource))
                 .doOnSuccess(response -> requestResponseLogger.logResponse(response, resource.toString()));
         } else {
-            final var serializedBody = serialize(evaluatedBody, headers.getContentType());
+            val serializedBody = serialize(evaluatedBody, headers.getContentType());
             return responseBuilder
                 .syncBody(serializedBody)
                 .doOnSuccess(response -> requestResponseLogger.logResponse(response, serializedBody));

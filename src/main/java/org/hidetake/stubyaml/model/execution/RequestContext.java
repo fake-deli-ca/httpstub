@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.val;
 
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class RequestContext implements Bindable {
     private final Binding binding = createBinding();
 
     Binding createBinding() {
-        final var binding = new Binding();
+        val binding = new Binding();
         binding.setVariable("headers", requestHeaders);
         binding.setVariable("path", pathVariables);
         binding.setVariable("params", requestParams);
